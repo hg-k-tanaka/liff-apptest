@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>有給申請</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+
+<body>
+  <h2>有給申請フォーム</h2>
+  <div id="user"></div>
+
+  日付：<input type="date" id="date"><br><br>
+  理由：<input type="text" id="reason"><br><br>
+
+  <button onclick="send()">送信</button>
+
+  <script>
+    const LIFF_ID = "ここにLIFF ID";
+
+    async function init() {
+      await liff.init({ liffId: LIFF_ID });
+
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+
+      const profile = await liff.getProfile();
+      document.getElementById("user").innerText =
+        "ユーザー：" + profile.displayName;
+
+      // 今日の日付を初期値
+      document.getElementById("date").valueAsDate = new Date();
+    }
+
+    async function send() {
+      const profile = await liff.getProfile();
+
+      const data = {
+        userId: profile.userId,
+        name: profile.displayName,
+        date: document.getElementById("date").value,
+        reason: document.getElementById("reason").value
+      };
+
+      console.log(data);
+      alert("送信しました（ログ確認）");
+
+      liff.closeWindow();
+    }
+
+    init();
+  </script>
+</body>
+</html>
